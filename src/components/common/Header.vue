@@ -15,10 +15,10 @@
                     </el-tooltip>
                 </div>
                 <!-- 消息中心 -->
-                <div class="btn-bell">
+                <!-- <div class="btn-bell">
                     <el-tooltip
                         effect="dark"
-                        :content="message?`有${message}条未读消息`:`消息中心`"
+
                         placement="bottom"
                     >
                         <router-link to="/tabs">
@@ -26,7 +26,7 @@
                         </router-link>
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
-                </div>
+                </div> -->
                 <!-- 用户头像 -->
                 <div class="user-avator" >
                     <img :src="avatar" />
@@ -54,18 +54,15 @@ export default {
             collapse: false,
             fullscreen: false,
             init_avatar : require('../../assets/img/img.jpg'),
-            name: 'linxin',
-            message: 2
+            name: 'XXX',
+            avatar : JSON.parse(localStorage.getItem('userInfo')).iconUrl,
+            //message: 2
         };
     },
     computed: {
         username() {
-            let username = JSON.parse(localStorage.getItem('userInfo')).nickname;
+            let username = JSON.parse(localStorage.getItem('userInfo')).name;
             return username ? username : this.name;
-        },
-        avatar(){
-            let avatar = JSON.parse(localStorage.getItem('userInfo')).avatar;
-            return avatar ? this.base_api_url + avatar : this.init_avatar;
         }
     },
     created(){
@@ -74,13 +71,11 @@ export default {
     methods: {
         // 用户名下拉菜单选择事件
         handleCommand(command) {
-            var that = this
+            var that = this;
             if (command == 'loginout') {
-                this.api.out_login().then(res => {
-                    localStorage.removeItem('userInfo');
-                    that.$message.success('您已退出登录');
-                    that.$router.push('/login');
-                })
+                localStorage.removeItem('userInfo');
+                that.$message.success('您已退出登录');
+                that.$router.push('/login');
             }
             if(command == "updateInfo"){
                 this.$router.push('/per');

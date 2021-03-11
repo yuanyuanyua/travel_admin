@@ -8,6 +8,14 @@ import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 import './assets/css/icon.css';
 import './components/common/directives';
 import 'babel-polyfill';
+// //导入axios
+// import axios from 'axios'
+// //挂彩axios
+// Vue.prototype.$http=axios
+// //设置访问根路径
+// axios.defaults.baseURL="http://120.55.55.185:8088"
+
+
 
 // import { messages } from './components/common/i18n';
 //import './assets/css/theme-green/index.css'; // 浅绿色主题

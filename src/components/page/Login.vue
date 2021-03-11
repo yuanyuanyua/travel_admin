@@ -3,8 +3,8 @@
         <div class="ms-login">
             <div class="ms-title">后台管理系统</div>
             <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
-                <el-form-item prop="username">
-                    <el-input v-model="param.username" placeholder="username">
+                <el-form-item prop="name">
+                    <el-input v-model="param.name" placeholder="name">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
@@ -19,7 +19,7 @@
                     </el-input>
                 </el-form-item>
                 <div class="login-btn">
-                    <el-button type="primary" @click="submitForm()">登录</el-button>
+                    <el-button type="primary" @click="submitForm">登录</el-button>
                 </div>
             </el-form>
         </div>
@@ -31,8 +31,8 @@ export default {
     data: function() {
         return {
             param: {
-                username: 'admin',
-                password: '123123',
+                name: '欣妍',
+                password: '1z1uem',
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -42,14 +42,50 @@ export default {
     },
     created(){
         if(localStorage.getItem('userInfo'))
-            this.$router.push('/')
-
+            this.$router.push('/dashboard')
     },
     methods: {
         submitForm() {
             var that = this
-            //console.log("submit")
-                    that.$router.push('/');
+            // 验证输入是否合法
+            this.$refs.login.validate(valid => {
+                if (valid) {
+                    that.$message = this.$message
+                    // 登录验证
+                    this.api.login({name:this.param.name,password:this.param.password}).then(res => {
+                        console.log(res)
+                        if(res.code=="200"){
+                            localStorage.setItem('userInfo', JSON.stringify(res.data));
+                            that.$message.success('登录成功');
+                            // 登录日志
+                            // this.api.loginlog({userId:res.data.id}).then(response => {
+                            //     console.log(response)
+                            //     if(res.code=="200"){
+                            //         that.$message.success('日志添加成功');
+                            //     }else{
+                            //         that.$message.error(response.message);
+                            //     }
+                            // })
+                            // // 写入上次登录时间
+                            this.api.lastLogin({id:res.data.id}).then(response1 => {
+                                console.log(response1)
+                                if (response1.code=="200") {
+                                    that.$message.success('上次登录时间写入成功');
+                                }else {
+                                    that.$message.error(response1.message);
+                                }
+                            })
+                            // 跳转页面
+                            that.$router.push('/dashboard');   
+                        }else{
+                            that.$message.error(res.message);
+                        }
+                    })
+                } else {
+                    this.$message.error('请输入账号和密码');
+                    return false;
+                }
+            });
         },
     },
 }

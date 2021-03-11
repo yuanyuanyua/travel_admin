@@ -1,37 +1,45 @@
 <template>
     <div>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-row :gutter="20" class="mgb20">
+        <el-row :gutter="24">
+            <el-col :span="24">
+                <el-row :gutter="24" class="mgb20">
                     <el-col :span="6">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
+                        <el-card shadow="hover" class="mgb20" style="height:500px;">
+                            <div class="user-info">
+                                <!-- <img  class="user-avator" alt /> -->
+                                <img :src="iconUrl" class="user-avator" alt />
+                                <div class="user-info-cont">
+                                    <div class="user-info-name">{{name}}</div>
+                                    <div>{{role}}</div>
+                                </div>
+                            </div>
+                            <div class="user-info-list">
+                                上次登录时间：
+                            </div>
+                            <div class="user-info-list">
+                                {{new Date(userInfo.lastLoginTime).toLocaleString()}}
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}" >
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">122</div>
+                                    <div class="grid-num">{{supplierCount}}</div>
                                     <div>供应商总量</div>
                                 </div>
                             </div>
                         </el-card>
+                        
                     </el-col>
                     <el-col :span="6">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-user grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">3467</div>
-                                    <div>会员总量</div>
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-2">
-                                <i class="el-icon-lx-notice grid-con-icon"></i>
-                                <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
+                                    <div class="grid-num">{{orderCount}}</div>
+                                    <div>订单总量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -41,8 +49,8 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>产品数量</div>
+                                    <div class="grid-num">{{count}}</div>
+                                    <div>商品数量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -51,7 +59,7 @@
                 </el-row>
             </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
             <el-col :span="12">
                 <el-card shadow="hover">
                     <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
@@ -61,8 +69,8 @@
                 <el-card shadow="hover">
                     <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
                 </el-card>
-            </el-col>
-        </el-row>
+            </el-col> -->
+        <!-- </el-row> -->
     </div>
 </template>
 
@@ -73,38 +81,43 @@ export default {
     name: 'dashboard',
     data() {
         return {
-            userInfo : JSON.parse(localStorage.getItem('userInfo')),
-            name: JSON.parse(localStorage.getItem('userInfo')).nickname,
-            data: [
-                {
-                    name: '2018/09/04',
-                    value: 1083
-                },
-                {
-                    name: '2018/09/05',
-                    value: 941
-                },
-                {
-                    name: '2018/09/06',
-                    value: 1139
-                },
-                {
-                    name: '2018/09/07',
-                    value: 816
-                },
-                {
-                    name: '2018/09/08',
-                    value: 327
-                },
-                {
-                    name: '2018/09/09',
-                    value: 228
-                },
-                {
-                    name: '2018/09/10',
-                    value: 1065
-                }
-            ],
+            userInfo : '',
+            name: '',
+            count:0,
+            role: '您好,管理员',
+            orderCount:0,
+            supplierCount:0,
+            iconUrl: '',
+            // data: [
+                // {
+                //     name: '2018/09/04',
+                //     value: 1083
+                // },
+                // {
+                //     name: '2018/09/05',
+                //     value: 941
+                // },
+                // {
+                //     name: '2018/09/06',
+                //     value: 1139
+                // },
+                // {
+                //     name: '2018/09/07',
+                //     value: 816
+                // },
+                // {
+                //     name: '2018/09/08',
+                //     value: 327
+                // },
+                // {
+                //     name: '2018/09/09',
+                //     value: 228
+                // },
+                // {
+                //     name: '2018/09/10',
+                //     value: 1065
+                // }
+            // ],
             options: {
                 type: 'bar',
                 title: {
@@ -162,17 +175,25 @@ export default {
         Schart
     },
     created(){
-        if(localStorage.getItem('userInfo')){
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        this.iconUrl =  this.userInfo.iconUrl
+        this.name = this.userInfo.name
+        this.getCount() //获取商品数量
+        this.getOrderCount() // 获取订单数量
+        this.getSupplierCount()//获取供应商总量
+        // this.getChartDay() // 获取一周各商品销量
+        // this.getChartMonth() // 获取几月各商品销量
+        // if(localStorage.getItem('userInfo')){
 
-        }
-        else
-            this.$router.push('/login');
+        // }
+        // else
+        //     this.$router.push('/login');
     },
-    computed: {
-        role() {
-            return this.name === 'admin' ? '超级管理员' : '普通用户';
-        }
-    },
+    // computed: {
+    //     role() {
+    //         return this.name === 'admin' ? '超级管理员' : '普通用户';
+    //     }
+    // },
     // created() {
     //     this.handleListener();
     //     this.changeDate();
@@ -185,13 +206,52 @@ export default {
     //     bus.$off('collapse', this.handleBus);
     // },
     methods: {
-        changeDate() {
-            const now = new Date().getTime();
-            this.data.forEach((item, index) => {
-                const date = new Date(now - (6 - index) * 86400000);
-                item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-            });
+        getCount() {
+            var that = this
+            this.api.getCount().then(res => {
+                console.log(res)
+                if(res.code=="200"){
+                    this.count = res.data
+                    // this.numInland = res.data[0]
+                    // this.numRim = res.data[1]
+                    // this.numOut = res.data[2]
+                    // this.numSpecial = res.data[3]
+                }else{
+                    that.$message.error("商品数量获取失败")
+                }
+            })
         },
+        // 获取订单总量
+        getOrderCount() {
+            var that = this
+            this.api.getOrderCount().then(res => {
+                console.log(res)
+                if(res.code=="200"){
+                    that.orderCount = res.data
+                }else{
+                    that.$message.error("订单数量获取失败")
+                }
+            })
+        },
+        // 获取供应商总量
+        getSupplierCount() {
+            var that = this
+            this.api.getSupplierCount().then(res => {
+                console.log(res)
+                if(res.code=="200"){
+                    that.supplierCount = res.data
+                }else{
+                    that.$message.error("供应商总量获取失败")
+                }
+            })
+        },
+        // changeDate() {
+        //     const now = new Date().getTime();
+        //     this.data.forEach((item, index) => {
+        //         const date = new Date(now - (6 - index) * 86400000);
+        //         item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+        //     });
+        // },
 
         // handleListener() {
         //     bus.$on('collapse', this.handleBus);

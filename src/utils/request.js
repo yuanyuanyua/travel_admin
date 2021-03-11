@@ -10,7 +10,8 @@ const ct1 = 'application/x-www-form-urlencoded;charset=UTF-8';
 const ct2 = "application/json"
 //const api_base_url = "http://localhost:8080/"
 //const api_base_url = "http://101.132.145.51:8080"
-const api_base_url = 'http://139.129.14.127:9090/'
+//const api_base_url = 'http://139.129.14.127:9090/'
+const api_base_url = 'http://localhost:8088/'
 //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 //开启跨域请求携带session
 axios.defaults.withCredentials = true

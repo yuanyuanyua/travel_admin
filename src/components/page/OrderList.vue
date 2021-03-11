@@ -8,34 +8,37 @@
         <div class="crumbs">
             <el-breadcrumb>
                 <el-breadcrumb-item>
-                    <i class="el-icon-files"></i> 常量列表
+                    <i class="el-icon-files"></i> 订单管理
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
                 <el-select v-model="show_state" placeholder="显示全部" class="handle-select mr10" @change="getShowState">
-                    <el-option key="0" label="显示全部" value="0"></el-option>
+                    <el-option key="" label="显示全部" value=""></el-option>
                     <el-option key="1" label="待付款" value="1"></el-option>
-                    <el-option key="2" label="待出行" value="2"></el-option>
-                    <el-option key="3" label="交易成功(未点评)" value="3"></el-option>
-                    <el-option key="4" label="交易成功(已点评)" value="4"></el-option>
-                    <el-option key="5" label="交易失败(已取消)" value="5"></el-option>
-                    <el-option key="6" label="待退款" value="6"></el-option>
-                    <el-option key="7" label="退款成功" value="7"></el-option>
+                    <el-option key="2" label="待接单" value="2"></el-option>
+                    <el-option key="3" label="待出行" value="3"></el-option>
+                    <el-option key="4" label="已完成" value="4"></el-option>
+                    <el-option key="5" label="退款申请" value="5"></el-option>
+                    <el-option key="6" label="取消退款申请" value="6"></el-option>
                 </el-select>
                 <el-input style="margin-left: 30px" placeholder="请输入内容" v-model="search_key_word"
                           class="input-with-select" clearable>
                     <el-select style="width: 110px;" v-model="searchType" slot="prepend"
-                               placeholder="下单用户" @change="getSearchType">
-                        <el-option label="下单用户" value="0"></el-option>
+                               placeholder="选择类型" @change="getSearchType">
+                        <!-- <el-option label="下单用户" value="0"></el-option>
                         <el-option label="产品名称" value="1"></el-option>
                         <el-option label="下单时间" value="2"></el-option>
                         <el-option label="处理时间" value="3"></el-option>
                         <el-option label="联系人" value="4"></el-option>
-                        <el-option label="出行人" value="5"></el-option>
+                        <el-option label="出行人" value="5"></el-option> -->
+                        <el-option label="订单编号" value="0"></el-option>
+                        <el-option label="产品名称"  value="1"></el-option>
+                        <el-option label="联系人" value="2"></el-option>
+                        <el-option label="下单用户" value="3"></el-option>
                     </el-select>
-                    <el-button slot="append" icon="el-icon-search" @click="getSearchResult"></el-button>
+                    <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
                 </el-input>
             </div>
             <div>
@@ -43,13 +46,51 @@
                         :data="tableData"
                         v-loading="isLoading"
                         border
-                       
                         ref="multipleTable"
                         @select="handleSelection"
                         @select-all="handleSelection"
                 >
+                    <el-table-column prop="id" label="编号" width="80" align="center"></el-table-column>
+                    <el-table-column prop="userName" label="下单用户" width="80" align="center"></el-table-column>
+                    <el-table-column prop="goodsName" label="产品名称" width="240" align="center"></el-table-column>
+                    <el-table-column prop="adultSum" label="成人" width="90" align="center"></el-table-column>
+                    <el-table-column prop="childSum" label="儿童" width="90" align="center"></el-table-column>
+                    <el-table-column prop="contactName"  label="联系人" width="140" align="center">
+                        <template slot-scope="scope">
+                            <ul>
+                                <li style="list-style: none">
+                                    {{scope.row.contactName}}{{scope.row.contactPhone}}
+                                </li>
+                            </ul>
+                        </template>
+                    </el-table-column>
+                    <!-- <el-table-column label="出行人" width="140" align="center">
+                        <template slot-scope="scope">
+                            <ul>
+                                <li v-for="(item, index) in scope.row.passengerList" :key="index" style="list-style: none">
+                                    {{item.name}}{{item.phone}}
+                                </li>
+                            </ul>
+                        </template>
+                    </el-table-column> -->
+                    <el-table-column prop="createTime" label="下单时间" align="center">
+                        <template slot-scope="scope">
+                            {{new Date(scope.row.createTime).toLocaleString()}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="state" label="订单状态" width="150" align="center">
+                        <template slot-scope="scope">
+                            <el-tag
+                                    :type="scope.row.state === 4?'success':'primary'"
+                                    :style="scope.row.state === 4?'cursor: pointer':''"
+                                    @click="handleRefund(scope.row)"
+                            >{{handleTags(scope.row)}}
+                            </el-tag>
+                        
+                        </template>
+                    </el-table-column>
                     <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
-                    <el-table-column prop="user_nickname" label="用户名" width="90" align="center"></el-table-column>
+                    <!-- <el-table-column prop="user_nickname" label="用户名" width="90" align="center"></el-table-column>
                     <el-table-column prop="title" label="产品名称" width="240" align="center"></el-table-column>
                     <el-table-column prop="adult_num" label="成人"  align="center"></el-table-column>
                     <el-table-column prop="child_num" label="儿童"  align="center"></el-table-column>
@@ -86,27 +127,27 @@
                             >{{handleTags(scope.row)}}
                             </el-tag>
                         </template>
-                    </el-table-column>
-                    <el-table-column label="操作" align="center" width="160">
+                    </el-table-column> -->
+                    <!-- <el-table-column label="操作" align="center" width="160">
                         <template slot-scope="scope" >
                             <el-button type="primary" v-if="scope.row.state == 2 || scope.row.state == 1"
-                            @click="handleSub(scope.row)">{{scope.row.state == 1?'确认退款':scope.row.state == 2?'查看投诉内容':''}}</el-button>
+                            @click="handleSub(scope.row)">{{scope.row.state == 1?'确认退款':scope.row.state == 2?'删除':''}}</el-button>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                 </el-table>
-                <el-dialog title="投诉内容" :visible="showRemark">
+                <!-- <el-dialog title="投诉内容" :visible="showRemark">
                     XXXXXXXXXXXXXXXXXXX
                       <div slot="footer" class="dialog-footer">
                             <el-button >确认撤单</el-button>
                             <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
                         </div>
-                </el-dialog>
+                </el-dialog> -->
                 <div class="pagination">
                     <el-pagination
                             background
                             layout="total, prev, pager, next"
-                            :current-page="query.pageIndex"
-                            :page-size="query.pageSize"
+                            :current-page="query.current"
+                            :page-size="query.size"
                             :total="pageTotal"
                             @current-change="handlePageChange"
                     ></el-pagination>
@@ -122,50 +163,62 @@
         name: 'OrderList',
         data() {
             return {
+                userInfo:{},
                 showRemark:false,
                 query: {
-                    address: '',
-                    name: '',
-                    pageIndex: 1,
-                    pageSize: 10
+                    //supplierId: '',// 页面初始化时即赋值
+                    orderId: '',
+                    goodsName: '',
+                    contactName: '',
+                    state: '',
+                    userName: '',
+                    current: 1,
+                    size: 6
                 },
                 show_state: '',
                 tableData: [
-                    {
-                        user_nickname: "TY",
-                        adult_num: 1,
-                        child_num: 1,
-                        departure_time: "2020-04-23",
-                        id: 1,
-                        link_man: [
-                            {   mobile: "13476818230",name: "TY"    }
-                        ],
-                        passenger:[
-                            {   mobile: "13476818230",name: "TY"    }
-                        ],
-                        order_time: "2020-05-23T01:52:39.000+0000",
-                        state: 3,
-                        title: "三亚春节热售 豪品0自费 印象丽江+洱海大邮轮+玉龙雪山"
-                    }
+                    // {
+                    //     user_nickname: "TY",
+                    //     adult_num: 1,
+                    //     child_num: 1,
+                    //     departure_time: "2020-04-23",
+                    //     id: 1,
+                    //     link_man: [
+                    //         {   mobile: "13476818230",name: "TY"    }
+                    //     ],
+                    //     passenger:[
+                    //         {   mobile: "13476818230",name: "TY"    }
+                    //     ],
+                    //     order_time: "2020-05-23T01:52:39.000+0000",
+                    //     state: 3,
+                    //     title: "三亚春节热售 豪品0自费 印象丽江+洱海大邮轮+玉龙雪山"
+                    // }
                 ],
-                pageTotal: 10,
+                pageTotal: 0,
                 isLoading: false,
-                categoryList: [],
-                categoryIdMap: {},
-                handleTitle: '',
-                form: {},
+                // categoryList: [],
+                // categoryIdMap: {},
+                //handleTitle: '',
+                //form: {},
                 searchType: '',
                 search_key_word: '',
                 showType: 'normalData',
-                cityList: [],
-                stateList: ['商家同意退款', '用户已投诉', '交易成功（待评价）', '交易成功（已点评）', '交易失败（已取消）', '待退款', '退款成功']
+                //cityList: [],
+                stateList: ['待付款', '待接单', '待出行', '已完成', '退款申请', '取消退款申请'],
             };
+        },
+        created() {
+            // this.pageInit();
+                //this.getTableData();
+                this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+                //this.query.supplierId = this.userInfo.id
+                this.getOrderList();//获取订单列表
         },
         methods: {
             handleSub(row){
                 var state = row.state
                 if(state == 1){
-                     this.$confirm('是否确认退款', '提示', {
+                    this.$confirm('是否确认退款', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -184,6 +237,33 @@
                 if(state == 2)
                     this.showRemark = true
             },
+            initQuery() {
+                this.query.orderId = ''
+                this.query.goodsName = ''
+                this.query.contactName = ''
+                this.query.userName = ''
+                this.current = 1
+                this.size = 4
+            },
+            search(){
+                this.initQuery()
+                if(this.searchType == '0') {
+                    this.query.orderId = this.search_key_word
+                }else if(this.searchType == '1') {
+                    this.query.goodsName = this.search_key_word
+                }else if(this.searchType == '2') {
+                    this.query.contactName = this.search_key_word
+                }else if(this.searchType == '3') {
+                    this.query.userName = this.search_key_word
+                }
+                this.isLoading = true
+                this.getOrderList()
+            },
+            // // 正确显示订单状态
+            // handleTags(data) {
+            //     return this.stateList[data.state - 1];
+            // },
+            click(){},
             handleSensitive(number) {
                 return number.replace(number.substring(3, 7), '****');
             },
@@ -212,52 +292,101 @@
                         })
                     });
             },
+            // 获取改变的状态选择值
             getShowState(e) {
-                if (parseInt(e) === 0) {
-                    this.isLoading = true;
-                    this.getTableData();
-                    this.isLoading = false;
-                } else {
-                    api.searchSpecifiedOrder({
-                        attrName: 'state',
-                        attrValue: e,
-                        pageNum: this.query.pageIndex,
-                        pageSize: this.query.pageSize
-                    }).then(res => {
-                        this.tableData = res.data.orders;
-                        this.pageTotal = res.data.total;
-                        this.isLoading = false;
-                    });
-                }
+                this.query.state = e
+                this.isLoading = true
+                this.getOrderList()
 
             },
-            getTableData() {
-                this.isLoading = true;
-                var that = this;
-                api.getOrderList({
-                    pageNum: that.query.pageIndex,
-                    pageSize: that.query.pageSize
-                }).then(res0 => {
-                    this.tableData = res0.data.orders;
-                    this.pageTotal = res0.data.total;
-                    this.isLoading = false;
-                    console.log(this.form);
-                }).catch(err => {
-                    console.log(err);
-                });
+            // getShowState(e) {
+            //     if (parseInt(e) === 0) {
+            //         this.isLoading = true;
+            //         this.getTableData();
+            //         this.isLoading = false;
+            //     } else {
+            //         api.searchSpecifiedOrder({
+            //             attrName: 'state',
+            //             attrValue: e,
+            //             pageNum: this.query.pageIndex,
+            //             pageSize: this.query.pageSize
+            //         }).then(res => {
+            //             this.tableData = res.data.orders;
+            //             this.pageTotal = res.data.total;
+            //             this.isLoading = false;
+            //         });
+            //     }
+
+            // },
+            
+            // 获取订单列表
+            getOrderList() {
+                this.api.getOrderList(this.query).then( res => {
+                    console.log(res)
+                    if(res.code=="200"){
+                        this.isLoading = false
+                        this.$message.success("成功获取订单列表")
+                        this.tableData = res.data.data
+                        this.pageTotal = res.data.total
+                        // if(this.tableData != null) {
+                        //     this.tableData.forEach(item => {
+                        //         this.api.getPassenger({orderId: item.id}).then(response => {
+                        //             if(response.code=="200"){
+                        //                 item.passengerList = response.data
+                        //             }else {
+                        //                 this.$message.error("获取旅客信息列表失败")
+                        //             }
+                        //         })
+                        //     })
+                            
+                        // }
+                    }else{
+                        this.$message.error("获取订单列表失败")
+                    }
+                })
             },
+            // 分页导航点击事件
+            handlePageChange(val, e) {
+                this.$set(this.query, 'current', val);
+                this.getOrderList()
+
+            },
+            // getTableData() {
+            //     this.api.getTableData().then(res => {
+            //     console.log(res)
+            //     if(res.code=="200") {
+            //         this.$message.success("成功获取订单信息")
+            //         this.tableData = res.data
+            //     }else{
+            //         this.$message.error(res.message)
+            //     }
+            // })
+            //     // this.isLoading = true;
+            //     // var that = this;
+            //     // api.getOrderList({
+            //     //     pageNum: that.query.pageIndex,
+            //     //     pageSize: that.query.pageSize
+            //     // }).then(res0 => {
+            //     //     this.tableData = res0.data.orders;
+            //     //     this.pageTotal = res0.data.total;
+            //     //     this.isLoading = false;
+            //     //     console.log(this.form);
+            //     // }).catch(err => {
+            //     //     console.log(err);
+            //     // });
+            // },
             handleSelection(e) {
                 console.log(e);
             },
-            handlePageChange(val, e) {
-                this.$set(this.query, 'pageIndex', val);
-                if (this.showType === 'normalData') {
-                    this.getTableData();
-                } else {
-                    this.getSearchResult(e, val);
-                }
+            // handlePageChange(val, e) {
+            //     this.$set(this.query, 'pageIndex', val);
+            //     if (this.showType === 'normalData') {
+            //         this.getOrderList();
+            //     } else {
+            //         this.getSearchResult(e, val);
+            //     }
 
-            },
+            // },
             getSearchType(e) {
 
             },
@@ -283,7 +412,7 @@
                     this.showType = 'normal';
                     this.$message.error('请输入搜索内容');
                     this.query.pageIndex = 1;
-                    this.getTableData();
+                    this.getOrderList();
                     this.isLoading = false;
                 }
                 console.log(this.showType);
@@ -301,33 +430,31 @@
                 return new_arr;
             },
             //初始化城市列表
-            initCity(cityList) {
-                var cl = [];
-                cityList.forEach(c => {
-                    var t = {
-                        value: c.id,
-                        label: c.city
-                    };
-                    cl.push(t);
-                });
-                return cl;
-            },
-            pageInit() {
-                api.getAllCities().then(res => {
-                    if (res.code === 200) {
-                        this.cityList = this.initCity(res.data);
-                        localStorage.setItem('cityList', JSON.stringify(this.cityList));
-                    }
-                }).catch(err => {
-                    console.log(err);
-                }).then(res => {
-                    this.getTableData();
-                });
-            }
+            // initCity(cityList) {
+            //     var cl = [];
+            //     cityList.forEach(c => {
+            //         var t = {
+            //             value: c.id,
+            //             label: c.city
+            //         };
+            //         cl.push(t);
+            //     });
+            //     return cl;
+            // },
+            // pageInit() {
+            //     api.getAllCities().then(res => {
+            //         if (res.code === 200) {
+            //             this.cityList = this.initCity(res.data);
+            //             localStorage.setItem('cityList', JSON.stringify(this.cityList));
+            //         }
+            //     }).catch(err => {
+            //         console.log(err);
+            //     }).then(res => {
+            //         this.getTableData();
+            //     });
+            // }
         },
-        created() {
-            this.pageInit();
-        }
+        
     };
 </script>
 <style scoped>

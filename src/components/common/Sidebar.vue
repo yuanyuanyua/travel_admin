@@ -64,7 +64,7 @@
                         index: 'dashboard',
                         title: '系统首页'
                     },
-                     {
+                    {
                         icon: 'el-icon-lx-apps',
                         index: 'certification',
                         title: '审核认证'
@@ -74,15 +74,15 @@
                         index: 'supplier',
                         title: '供应商管理'
                     },
-                    {
-                        icon: 'el-icon-lx-apps',
-                        index: 'vip',
-                        title: '会员管理'
-                    },
+                    // {
+                    //     icon: 'el-icon-lx-apps',
+                    //     index: 'vip',
+                    //     title: '会员管理'
+                    // },
                     {
                         icon: 'el-icon-lx-apps',
                         index: 'travelProducts',
-                        title: '行程管理'
+                        title: '产品管理'
                     },
                     {
                         icon: 'el-icon-lx-calendar',
