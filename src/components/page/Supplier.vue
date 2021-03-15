@@ -22,10 +22,10 @@
                         ></el-image>
                 </template>
             </el-table-column>
-            <el-table-column  prop="state" fixed="right" label="账号状态" align="center" width="180">
+            <el-table-column  prop="supplierState" fixed="right" label="账号状态" align="center" width="180">
                 <!-- <el-switch v-model="value1" active-text="正常" inactive-text="已禁用"></el-switch> -->
-                <template slot-scope="scope"><!--数据模板-->
-                    <el-switch v-model="scope.row.state"  @change="stateChanged(scope.row)" active-text="正常" inactive-text="禁用"></el-switch>
+                <template slot-scope="scope">
+                    <el-switch  :active-value=1 :inactive-value=0 v-model="scope.row.supplierState"  @change="stateChanged(scope.row)" active-text="正常"  inactive-text="禁用" ></el-switch>
                 </template> 
             </el-table-column>
         </el-table>
@@ -38,6 +38,16 @@ export default {
             //value1:false,
             //srcList:[require('../../assets/img/test1.jpg'),require('../../assets/img/test2.png'),require('../../assets/img/test4.png'),require('../../assets/img/test3.png')],
             tableData:[],
+            // query:{
+            //     name:'',
+            //     representName:'',
+            //     representPhone:'',
+            //     representIdcard:'',
+            //     chargeImage:'',
+            // }
+            // supplierId:'',
+            // supplierState:'',
+            
         }
     },
     created(){
@@ -58,15 +68,17 @@ export default {
             })
         },
         stateChanged(row){
-            this.api.stateChanged({representIdcard:row.representIdcard,state:row.state}).then(res => {
+            // console.log(e)
+            this.api.stateChanged({supplierId:row.supplierId,supplierState:row.supplierState}).then(res => {
                         console.log(res)
                         if(res.code!="200"){
-                            tableData.representIdcard != tableData.representIdcard;
+                            tableData.supplierId != tableData.supplierId;
                             this.$message.error(res.message);
                             
-                            //this.tableData = res.data
+                            
                         }else{
                             this.$message.success('成功修改状态');
+                            //this.tableData = res.data
                         }
                     })
         },

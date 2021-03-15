@@ -53,6 +53,7 @@
                     <el-table-column prop="id" label="编号" width="80" align="center"></el-table-column>
                     <el-table-column prop="userName" label="下单用户" width="80" align="center"></el-table-column>
                     <el-table-column prop="goodsName" label="产品名称" width="240" align="center"></el-table-column>
+                    <el-table-column prop="supplierName" label="供应商名称" width="100" align="center"></el-table-column>
                     <el-table-column prop="adultSum" label="成人" width="90" align="center"></el-table-column>
                     <el-table-column prop="childSum" label="儿童" width="90" align="center"></el-table-column>
                     <el-table-column prop="contactName"  label="联系人" width="140" align="center">
@@ -169,6 +170,7 @@
                     //supplierId: '',// 页面初始化时即赋值
                     orderId: '',
                     goodsName: '',
+                    supplierName:'',
                     contactName: '',
                     state: '',
                     userName: '',

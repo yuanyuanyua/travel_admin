@@ -44,12 +44,15 @@ export default {
     getOrderCount(params) {
         return fetch(`order/count`, params, 'get')
     },// 订单数量
+    getTotalPrice(params) {
+        return fetch(`order/price`, params, 'get')
+    },// 订单数量
 
     getSupplierCount(params) {
         return fetch(`supplier/count`, params, 'post')
     },// 供应商总量
     stateChanged(params) {
-        return fetch(`qualify/state`, params, 'get')
+        return fetch(`supplier/state`, params, 'get')
     },// 更新供应商状态
     update(params) {
         return fetch(`qualify/update`, params, 'post')

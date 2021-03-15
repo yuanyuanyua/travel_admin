@@ -71,8 +71,10 @@
                 <!-- <el-button type="text" v-model="scope.row.state" @change="handleCert" size="small" >审核</el-button> -->
                     <template slot-scope="scope"><!--数据模板-->
                         <!-- <el-button  type="text" v-model="scope.row.state" @change="handleCert" size="small">已审核</el-button> -->
-                        <el-button v-if="scope.row.state == 1" disabled type="text" style="color:#909399" icon="el-icon-s-release" >已审核</el-button>
-                        <el-button v-else  type="text" style="color:#67C23A" icon="el-icon-s-release" @click="qualifyState(scope.row.representIdcard)">审核</el-button>
+                        <el-button v-if="scope.row.state == 2" disabled type="text" style="color:#67C23A" icon="el-icon-s-release" >已审核，通过</el-button>
+                        <el-button v-else-if="scope.row.state == 3" disabled type="text" style="color:#F56C6C" icon="el-icon-s-release" >已审核，不通过</el-button>
+                        <el-button v-if="scope.row.state == 1"  type="text" style="color:#E6A23C" icon="el-icon-s-release" @click="qualifyState(scope.row.id)">通过</el-button>
+                        <el-button v-if="scope.row.state == 1"  type="text" style="color:#E6A23C" icon="el-icon-s-release" @click="qualifyState2(scope.row.id)">不通过</el-button>
                         <!-- <el-button v-if="scope.row.state == 0" type="text" style="color:#67C23A" icon="el-icon-edit" @change="handleCert">待审核</el-button>
                         <el-button v-else  type="text" style="color:#909399" icon="el-icon-s-release">待审核</el-button> -->
 
@@ -124,7 +126,7 @@ export default {
             })
         },
         // 审核处理
-        qualifyState(id){
+        qualifyState(d){
             var msg = '确认审核?';
             //var tp = '接单提醒';
             this.$confirm(msg,  {
@@ -133,7 +135,27 @@ export default {
                 confirmButtonText: '确认',
                 cancelButtonText: '取消'
             }).then(() => {
-                this.api.update({representIdcard:id,state:"1"}).then(res => {
+                this.api.update({id:d,state:"2"}).then(res => {
+                    console.log(res)
+                    if(res.code=="200"){
+                        this.$message.success("审核成功")
+                        this.getQualification();
+                    }else{
+                        this.$message.error(res.message)
+                    }
+                })
+            })
+        },
+        qualifyState2(d){
+            var msg = '确认审核?';
+            //var tp = '接单提醒';
+            this.$confirm(msg,  {
+                distinguishCancelAndClose: true,
+                type: 'warning',
+                confirmButtonText: '确认',
+                cancelButtonText: '取消'
+            }).then(() => {
+                this.api.update({id:d,state:"3"}).then(res => {
                     console.log(res)
                     if(res.code=="200"){
                         this.$message.success("审核成功")

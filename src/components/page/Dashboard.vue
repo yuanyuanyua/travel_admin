@@ -3,7 +3,7 @@
         <el-row :gutter="24">
             <el-col :span="24">
                 <el-row :gutter="24" class="mgb20">
-                    <el-col :span="6">
+                    <el-col :span="10">
                         <el-card shadow="hover" class="mgb20" style="height:500px;">
                             <div class="user-info">
                                 <!-- <img  class="user-avator" alt /> -->
@@ -21,8 +21,8 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="6">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}" >
+                    <el-col :span="7">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}" style="margin-bottom:15px" >
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
@@ -33,10 +33,10 @@
                         </el-card>
                         
                     </el-col>
-                    <el-col :span="6">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-3">
-                                <i class="el-icon-user grid-con-icon"></i>
+                    <el-col :span="7">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}" style="margin-bottom:15px">
+                            <div class="grid-content grid-con-2">
+                                <i class="el-icon-s-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">{{orderCount}}</div>
                                     <div>订单总量</div>
@@ -44,13 +44,24 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="7">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">{{count}}</div>
                                     <div>商品数量</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="7">
+                        <el-card shadow="hover" :body-style="{padding: '0px'}">
+                            <div class="grid-content grid-con-3">
+                                <i class="el-icon-s-shop grid-con-icon"></i>
+                                <div class="grid-cont-right">
+                                    <div class="grid-num">{{total}}</div>
+                                    <div>成交总量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -87,6 +98,7 @@ export default {
             role: '您好,管理员',
             orderCount:0,
             supplierCount:0,
+            total:0,
             iconUrl: '',
             // data: [
                 // {
@@ -181,6 +193,7 @@ export default {
         this.getCount() //获取商品数量
         this.getOrderCount() // 获取订单数量
         this.getSupplierCount()//获取供应商总量
+        this.getTotalPrice()//成交总量
         // this.getChartDay() // 获取一周各商品销量
         // this.getChartMonth() // 获取几月各商品销量
         // if(localStorage.getItem('userInfo')){
@@ -230,6 +243,17 @@ export default {
                     that.orderCount = res.data
                 }else{
                     that.$message.error("订单数量获取失败")
+                }
+            })
+        },
+        getTotalPrice() {
+            var that = this
+            this.api.getTotalPrice().then(res => {
+                console.log(res)
+                if(res.code=="200"){
+                    that.total = res.data
+                }else{
+                    that.$message.error("成交总量获取失败")
                 }
             })
         },
